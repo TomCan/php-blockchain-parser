@@ -9,6 +9,9 @@
 class Block
 {
 
+    public $header;
+    public $transactions;
+
     public function __construct()
     {
     }
@@ -25,15 +28,15 @@ class Block
 
         $data = fread($fp, $blocksize);
 
-        $header = new BlockHeader();
-        $header->fromRawData( substr($data, 0, 80) );
+        $this->header = new BlockHeader();
+        $this->header->fromRawData( substr($data, 0, 80) );
 
         $position = 80;
         $transactionCounter = BlockUtils::varInt($data, $position);
 
+        $this->transactions = array();
         for ($i = 0; $i < $transactionCounter; $i++) {
-            $transaction = new Transaction($data, $position);
-            var_dump($transaction);
+            $this->transactions[] = new Transaction($data, $position);
         }
 
     }
