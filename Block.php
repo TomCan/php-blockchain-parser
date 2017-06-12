@@ -12,6 +12,8 @@ class Block
     public $header;
     public $transactions;
 
+    public $data;
+
     public function __construct()
     {
     }
@@ -26,17 +28,17 @@ class Block
 
         $blocksize = BlockUtils::hexToNumber(fread($fp, 4));
 
-        $data = fread($fp, $blocksize);
+        $this->data = fread($fp, $blocksize);
 
         $this->header = new BlockHeader();
-        $this->header->fromRawData( substr($data, 0, 80) );
+        $this->header->fromRawData( substr($this->data, 0, 80) );
 
         $position = 80;
-        $transactionCounter = BlockUtils::varInt($data, $position);
+        $transactionCounter = BlockUtils::varInt($this->data, $position);
 
         $this->transactions = array();
         for ($i = 0; $i < $transactionCounter; $i++) {
-            $this->transactions[] = new Transaction($data, $position);
+            $this->transactions[] = new Transaction($this->data, $position);
         }
 
     }
