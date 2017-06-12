@@ -128,7 +128,7 @@ class Script
 
             $opcode = ord($data{$position});
 
-            BlockUtils::Log("$position: " . $opcode . " 0x" . dechex($opcode));
+            BlockUtils::Log("$position: " . dechex($opcode));
 
             // check ranges first
             $toPush = null;
@@ -137,11 +137,11 @@ class Script
                 $toPush = 1 + $opcode - self::OP_1;
             } elseif ($opcode >= self::OP_PUSHDATA_MIN && $opcode <= self::OP_PUSHDATA_MAX) {
                 $toPush = $opcode;
-            } elseif ($opcode = self::OP_PUSHDATA1) {
+            } elseif ($opcode == self::OP_PUSHDATA1) {
                 $toPush = BlockUtils::hexToNumber(substr($data, $position + 1, 1));
-            } elseif ($opcode = self::OP_PUSHDATA2) {
+            } elseif ($opcode == self::OP_PUSHDATA2) {
                 $toPush = BlockUtils::hexToNumber(substr($data, $position + 1, 2));
-            } elseif ($opcode = self::OP_PUSHDATA4) {
+            } elseif ($opcode == self::OP_PUSHDATA4) {
                 $toPush = BlockUtils::hexToNumber(substr($data, $position + 1, 4));
             }
 
