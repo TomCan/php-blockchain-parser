@@ -9,6 +9,8 @@
 class BlockUtils
 {
 
+    static $noLog = true;
+
     static function hexToNumber($bytes) {
 
         self::Log("hexToNumber " . bin2hex($bytes));
@@ -46,7 +48,9 @@ class BlockUtils
     }
 
     static function Log($text) {
-        echo $text . "\n";
+        if (!BlockUtils::$noLog) {
+            echo $text . "\n";
+        }
     }
 
     static function pubkeyToAddress($pubkey) {
