@@ -16,8 +16,12 @@ class Transaction
     public $outputs;
     public $lockTime;
 
+    public $data;
+
     public function __construct($data, &$position)
     {
+
+	$start  = $position;
 
         $this->version = BlockUtils::hexToNumber(substr($data, $position, 4));
         $position += 4;
@@ -41,6 +45,8 @@ class Transaction
 
         $this->lockTime = BlockUtils::hexToNumber(substr($data, $position, 4));
         $position += 4;
+
+	$this->data = substr($data, $start, $position - $start);
 
     }
 
