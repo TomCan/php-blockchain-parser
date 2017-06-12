@@ -25,13 +25,13 @@ class BlockHeader
             throw new Exception("Invalid header data");
         }
 
-        $version = BlockUtils::hexToNumber(substr($data, 0, 4));
-        $hashPrevBlock = substr($data, 4, 32);
-        $hashMerkleRoot = substr($data, 36, 32);
+        $this->version = BlockUtils::hexToNumber(substr($data, 0, 4));
+        $this->hashPrevBlock = substr($data, 4, 32);
+        $this->hashMerkleRoot = substr($data, 36, 32);
 
-        $time = BlockUtils::hexToNumber(substr($data, 40, 4));
-        $bits = BlockUtils::hexToNumber(substr($data, 44, 4));
-        $nonce = BlockUtils::hexToNumber(substr($data, 0, 4));
+        $this->time = BlockUtils::hexToNumber(substr($data, 40, 4));
+        $this->bits = BlockUtils::hexToNumber(substr($data, 44, 4));
+        $this->nonce = BlockUtils::hexToNumber(substr($data, 0, 4));
 
     }
 
