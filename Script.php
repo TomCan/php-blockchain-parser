@@ -204,7 +204,6 @@ class Script
         0xb9 => "OP_NOP10",
     );
 
-    public $pubkeys;
     public $stack;
 
     public function __construct()
@@ -216,7 +215,6 @@ class Script
         BlockUtils::Log("script: " . bin2hex($data));
 
         $this->stack = array();
-        $this->pubkeys = array();
 
         $position = 0;
         while ($position < strlen($data)) {
