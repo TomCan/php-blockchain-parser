@@ -108,6 +108,101 @@ class Script
     const OP_NOP4 = 0xb3;
     const OP_NOP10 = 0xb9;
 
+    const OP_NAMES = array(
+        0x0 => "OP_0",
+        0x51 => "OP_1",
+        0x52 => "OP_2",
+        0x53 => "OP_3",
+        0x54 => "OP_4",
+        0x55 => "OP_5",
+        0x56 => "OP_6",
+        0x57 => "OP_7",
+        0x58 => "OP_8",
+        0x59 => "OP_9",
+        0x5a => "OP_10",
+        0x5b => "OP_11",
+        0x5c => "OP_12",
+        0x5d => "OP_13",
+        0x5e => "OP_14",
+        0x5f => "OP_15",
+        0x60 => "OP_16",
+        0x01 => "OP_PUSHDATA_X_",
+        0x4b => "OP_PUSHDATA_X_",
+        0x4c => "OP_PUSHDATA1",
+        0x4d => "OP_PUSHDATA2",
+        0x4e => "OP_PUSHDATA4",
+        0x4f => "OP_1NEGATE",
+        0x61 => "OP_NOP",
+        0x63 => "OP_IF",
+        0x64 => "OP_NOTIF",
+        0x67 => "OP_ELSE",
+        0x68 => "OP_ENDIF",
+        0x69 => "OP_VERIFY",
+        0x6a => "OP_RETURN",
+        0x6b => "OP_TOALTSTACK",
+        0x6c => "OP_FROMALTSTACK",
+        0x73 => "OP_IFDUP",
+        0x74 => "OP_DEPTH",
+        0x75 => "OP_DROP",
+        0x76 => "OP_DUP",
+        0x77 => "OP_NIP",
+        0x78 => "OP_OVER",
+        0x79 => "OP_PICK",
+        0x7a => "OP_ROLL",
+        0x7b => "OP_ROT",
+        0x7c => "OP_SWAP",
+        0x7d => "OP_TUCK",
+        0x6d => "OP_2DROP",
+        0x6e => "OP_2DUP",
+        0x6f => "OP_3DUP",
+        0x70 => "OP_2OVER",
+        0x71 => "OP_2ROT",
+        0x72 => "OP_2SWAP",
+        0x82 => "OP_SIZE",
+        0x87 => "OP_EQUAL",
+        0x88 => "OP_EQUALVERIFY",
+        0x8b => "OP_1ADD",
+        0x8c => "OP_1SUB",
+        0x8f => "OP_NEGATE",
+        0x90 => "OP_ABS",
+        0x91 => "OP_NOT",
+        0x92 => "OP_0NOTEQUAL",
+        0x93 => "OP_ADD",
+        0x94 => "OP_SUB",
+        0x9a => "OP_BOOLAND",
+        0x9b => "OP_BOOLOR",
+        0x9c => "OP_NUMEQUAL",
+        0x9d => "OP_NUMEQUALVERIFY",
+        0x9e => "OP_NUMNOTEQUAL",
+        0x9f => "OP_LESSTHAN",
+        0xa0 => "OP_GREATERTHAN",
+        0xa1 => "OP_LESSTHANOREQUAL",
+        0xa2 => "OP_GREATERTHANOREQUAL",
+        0xa3 => "OP_MIN",
+        0xa4 => "OP_MAX",
+        0xa5 => "OP_WITHIN",
+        0xa6 => "OP_RIPEMD160",
+        0xa7 => "OP_SHA1",
+        0xa8 => "OP_SHA256",
+        0xa9 => "OP_HASH160",
+        0xaa => "OP_HASH256",
+        0xab => "OP_CODESEPARATOR",
+        0xac => "OP_CHECKSIG",
+        0xad => "OP_CHECKSIGVERIFY",
+        0xae => "OP_CHECKMULTISIG",
+        0xaf => "OP_CHECKMULTISIGVERIFY",
+        0xb1 => "OP_CHECKLOCKTIMEVERIFY",
+        0xb2 => "OP_CHECKSEQUENCEVERIFY",
+        0x50 => "OP_RESERVED",
+        0x62 => "OP_VER",
+        0x65 => "OP_VERIF",
+        0x66 => "OP_VERNOTIF",
+        0x89 => "OP_RESERVED1",
+        0x8a => "OP_RESERVED2",
+        0xb0 => "OP_NOP1",
+        0xb3 => "OP_NOP4",
+        0xb9 => "OP_NOP10",
+    );
 
     public $pubkeys;
     public $stack;
@@ -128,7 +223,11 @@ class Script
 
             $opcode = ord($data{$position});
 
-            BlockUtils::Log("$position: " . dechex($opcode));
+            if ($opcode >= self::OP_PUSHDATA_MIN && $opcode <= self::OP_PUSHDATA_MAX) {
+                $this->stack[] = "OP_PUSHDATAX_" . $opcode;
+            } else {
+                $this->stack[] = self::OP_NAMES[$opcode];
+            }
 
             // check ranges first
             $toPush = null;
@@ -148,7 +247,6 @@ class Script
             if ($toPush !== null) {
 
                 // push bytes on stack
-                BlockUtils::Log("Push $toPush: " . bin2hex(substr($data, $position + 1, $toPush)));
                 $this->stack[] = substr($data, $position + 1, $toPush);
                 $position += $toPush;
 
@@ -168,32 +266,6 @@ class Script
                         break;
                     case self::OP_1NEGATE:
                         $this->stack[] = -1;
-                        break;
-
-                        /*
-                         * for now, just try to extract hashes
-                         *
-                         * in most cases, this is the case if a HASH OP_ is followed by a pubkey and OP_EQUALVERIFY
-                         *
-                         */
-                    case self::OP_RIPEMD160:
-                    case self::OP_SHA1:
-                    case self::OP_SHA256:
-                    case self::OP_HASH160:
-                    case self::OP_HASH256:
-                        BlockUtils::Log("HASH");
-                        $this->stack[] = "HASH";
-                        break;
-                    case self::OP_EQUALVERIFY:
-                        BlockUtils::Log("EQUALVERIFY");
-                        var_dump($this->stack);
-                        if ($this->stack[count($this->stack) - 2] == "HASH") {
-                            // assume last value on stack is the pubkey
-                            $this->pubkeys[] = $this->stack[count($this->stack) - 1];
-                        } elseif ($this->stack[count($this->stack) - 1] == "HASH") {
-                            // assume second to last value on stack is the pubkey
-                            $this->pubkeys[] = $this->stack[count($this->stack) - 2];
-                        }
                         break;
 
                 }
