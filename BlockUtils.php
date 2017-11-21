@@ -69,6 +69,22 @@ class BlockUtils
 
     }
 
+    static function ripemd160ToAddress($hash) {
+
+        $steps[0] = "";
+        $steps[1] = "";
+        $steps[2] = $hash;
+        $steps[3] = "00" . $steps[2];
+        $steps[4] = hash("sha256", self::hashToBytes($steps[3]));
+        $steps[5] = hash("sha256", self::hashToBytes($steps[4]));
+        $steps[6] = substr($steps[5],0,8);
+        $steps[7] = $steps[3] . $steps[6];
+        $steps[8] = self::bc_base58_encode(self::bc_hexdec($steps[7]));
+
+        return "1" . $steps[8];
+
+    }
+
     static function hashToBytes($hash){
         $len=strlen($hash);
 
