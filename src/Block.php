@@ -1,11 +1,7 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: Tom
- * Date: 7/06/2017
- * Time: 22:02
- */
+namespace TomCan\Blockchain;
+
 class Block
 {
 

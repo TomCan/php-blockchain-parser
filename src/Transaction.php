@@ -1,11 +1,7 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * User: Tom
- * Date: 7/06/2017
- * Time: 23:01
- */
+namespace TomCan\Blockchain;
+
 class Transaction
 {
 
